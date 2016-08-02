@@ -1,0 +1,125 @@
+<script src="https://d3js.org/d3.v4.min.js"></script>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<style>
+
+
+.chart div {
+  font: 10px sans-serif;
+  background-color: steelblue;
+  text-align: right;
+  padding: 3px;
+  margin: 1px;
+  color: white;
+}
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+</style>
+
+<body>
+  <div class="container">
+    <div class="row"><h1 class="col-md-12">Caltrain</h1></div>
+    <div class="row"><h2 class="col-md-12">Weekdays</h2></div>
+    <div class="row">
+      <div id="caltrain-weekday" class="chart col-md-12"></div>
+    </div>
+    <div class="row"><h2 class="col-md-12">Weekends</h2></div>
+    <div class="row">
+      <div id="caltrain-weekend" class="chart col-md-12"/>
+    </div>
+  </div>
+</body>
+<script>
+
+var margin = {top: 0, right: 20, bottom: 20, left: 20},
+    width = 960 - margin.left - margin.right,
+    height = 180 - margin.top - margin.bottom;
+
+var x = d3.scaleTime()
+    .range([0, width]);
+
+var y = d3.scaleOrdinal()
+    .range([height-20, height/2]);
+
+var cValue = function(d) { return d.type;},
+    color = d3.scaleOrdinal(d3.schemeCategory10);
+
+var xAxis = d3.axisBottom(x);
+var yAxis = d3.axisLeft(y);
+
+var caltrainWeekday = d3.select("#caltrain-weekday").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var caltrainWeekend = d3.select("#caltrain-weekend").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+d3.csv("caltrain.csv", function (data) {
+  x.domain([new Date(2016, 6, 28), new Date(2016, 6, 29)]);
+  y.domain(["sb", "nb"]);
+
+  caltrainWeekday.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+
+  caltrainWeekday.append("g")
+      .attr("class", "y axis")
+      .call(yAxis)
+
+  caltrainWeekday.selectAll(".dot")
+    .data(data)
+  .enter().append("circle")
+    .filter(function (d) {
+      return d.schedule == "weekday";
+    })
+    .attr("class", "dot")
+    .attr("r", 3.5)
+    .attr("cx", function(d) {
+      var timeArr = d.time.split(":");
+      return x(new Date(2016, 6, 28, timeArr[0], timeArr[1]));
+    })
+    .attr("cy", function(d) { return y(d.direction); })
+    .style("fill", function(d) { return color(cValue(d));})
+
+    caltrainWeekend.append("g")
+      .attr("class", "x axis")
+      .attr("transform", "translate(0," + height + ")")
+      .call(xAxis)
+
+    caltrainWeekend.append("g")
+        .attr("class", "y axis")
+        .call(yAxis)
+
+    caltrainWeekend.selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .filter(function (d) {
+        return d.schedule == "weekend";
+      })
+      .attr("class", "dot")
+      .attr("r", 3.5)
+      .attr("cx", function(d) {
+        var timeArr = d.time.split(":");
+        return x(new Date(2016, 6, 28, timeArr[0], timeArr[1]));
+      })
+      .attr("cy", function(d) { return y(d.direction); })
+      .style("fill", function(d) { return color(cValue(d));})
+
+
+});
+
+</script>

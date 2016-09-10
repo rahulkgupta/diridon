@@ -6,18 +6,11 @@
 <style>
 
 
-/*.chart div {
-  font: 10px sans-serif;
-  background-color: steelblue;
-  text-align: right;
-  padding: 3px;
-  margin: 1px;
-  color: white;
+.chart {
+  padding: 30px;
+  background-color: #F5F8FA
 }
-*/
-svg {
-  background-color: #F5F8FA;
-}
+
 /*
 .axis path,
 .axis line {
@@ -40,7 +33,11 @@ svg {
     <div class="row"><h1 class="col-md-12">Diridon</h1></div>
     <div class="row"><h2 class="col-md-12">Weekdays</h2></div>
     <div class="row">
-      <div id="weekday" class="chart col-md-12"><svg id="duh"/></div>
+      <div id="weekday" class="col-md-12">
+        <div class="chart">
+          <svg id="duh"/>
+        </div>
+      </div>
     </div>
   </div>
 </body>
